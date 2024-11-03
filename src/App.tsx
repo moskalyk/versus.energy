@@ -5,6 +5,7 @@ import defaultImage from './assets/default.png';
 function App() {
   // Import all images in the assets folder
   const images = import.meta.glob('./assets/*.png', { eager: true });
+  // @ts-ignore
   const imageArray = [defaultImage, ...Object.values(images).map((module) => module.default)]
 
   const [imageIndex, setImageIndex] = useState(0);
