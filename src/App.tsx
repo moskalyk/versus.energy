@@ -26,7 +26,7 @@ function App() {
           className="logo"
           alt="Cycling Image"
           onClick={handleImageClick}
-          style={{width: '400px', height: '400px', cursor: 'pointer'}}
+          style={{width: '350px', height: '350px', cursor: 'pointer'}}
         />
       </div>
     </>
