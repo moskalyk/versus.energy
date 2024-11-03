@@ -17,6 +17,9 @@ function App() {
   return (
     <>
       <div>
+        <p style={{color: 'black'}}>Train against AI entropy</p>
+        <br/>
+        <br/>
         <img
           src={imageArray[imageIndex]}
           className="logo"
