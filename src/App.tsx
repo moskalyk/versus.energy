@@ -1,18 +1,30 @@
 import { useState } from 'react';
 import './App.css';
-import defaultImage from './assets/default.png';
+import defaultImageY from './assets/Y/default_y.png';
+import defaultImageX from './assets/X/default_x.png';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 function App() {
   // Import all images in the assets folder
-  const images = import.meta.glob('./assets/*.png', { eager: true });
+  const imagesY = import.meta.glob('./assets/Y/*.png', { eager: true });
+  const imagesX = import.meta.glob('./assets/X/*.png', { eager: true });
   // @ts-ignore
-  const imageArray = [defaultImage, ...Object.values(images).map((module) => module.default)]
+  const imageArrayY = [defaultImageY, ...Object.values(imagesY).map((module) => module.default)]
+  // @ts-ignore
+  const imageArrayX = [defaultImageX, ...Object.values(imagesX).map((module) => module.default)]
 
-  const [imageIndex, setImageIndex] = useState(0);
+  const [imageIndexY, setImageIndexY] = useState(0);
+  const [imageIndexX, setImageIndexX] = useState(0);
 
-  const handleImageClick = () => {
-    const randomIndex = Math.floor(Math.random() * imageArray.length);
-    setImageIndex(randomIndex);
+  const handleImageClickY = () => {
+    const randomIndex = Math.floor(Math.random() * imageArrayY.length);
+    setImageIndexY(randomIndex);
+  };
+
+  const handleImageClickX = () => {
+    const randomIndex = Math.floor(Math.random() * imageArrayX.length);
+    setImageIndexX(randomIndex);
   };
 
   return (
@@ -21,13 +33,29 @@ function App() {
         <p style={{color: 'black'}}>Train against AI entropy</p>
         <br/>
         <br/>
-        <img
-          src={imageArray[imageIndex]}
-          className="logo"
-          alt="Cycling Image"
-          onClick={handleImageClick}
-          style={{width: '350px', height: '350px', cursor: 'pointer'}}
-        />
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={30}
+          loop={true}
+          className="mySwiper"
+        >
+          <SwiperSlide><img
+            src={imageArrayY[imageIndexY]}
+            className="logo"
+            alt="Cycling Image"
+            onClick={handleImageClickY}
+            style={{width: '350px', height: '350px', cursor: 'pointer'}}
+          /></SwiperSlide>
+          <SwiperSlide>
+          <img
+            src={imageArrayX[imageIndexX]}
+            className="logo"
+            alt="Cycling Image"
+            onClick={handleImageClickX}
+            style={{width: '350px', height: '350px', cursor: 'pointer'}}
+          />
+            </SwiperSlide>
+        </Swiper>
       </div>
     </>
   );
