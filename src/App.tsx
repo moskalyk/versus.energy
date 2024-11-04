@@ -31,6 +31,9 @@ function App() {
   return (
     <>
       <div>
+        <p style={{color: 'black'}}>Versus</p>
+        <br/>
+        <br/>
         <p style={{color: 'black'}}>Train against AI entropy</p>
         <br/>
         <br/>
