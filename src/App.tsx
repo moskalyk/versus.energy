@@ -3,6 +3,7 @@ import './App.css';
 import defaultImageY from './assets/Y/default_y.png';
 import defaultImageX from './assets/X/default_x.png';
 import { Swiper, SwiperSlide } from 'swiper/react';
+// @ts-ignore
 import 'swiper/css';
 
 function App() {
