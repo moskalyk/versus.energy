@@ -9,29 +9,31 @@ import 'swiper/css';
 function App() {
   const imagesY = import.meta.glob('./assets/Y/*.png', { eager: true });
   const imagesX = import.meta.glob('./assets/X/*.png', { eager: true });
-  // @ts-ignore
-  const imageArrayY = [defaultImageY, ...Object.values(imagesY).map((module) => module.default)];
-
-  // @ts-ignore
-  const imageArrayX = [defaultImageX, ...Object.values(imagesX).map((module) => module.default)];
-
+  
   const shuffleArray = (array: any) => array.sort(() => Math.random() - 0.5);
 
-  const [shuffledImagesY, setShuffledImagesY] = useState(shuffleArray([...imageArrayY]));
-  const [shuffledImagesX, setShuffledImagesX] = useState(shuffleArray([...imageArrayX]));
+  // Separate the default image and shuffle the remaining images
+  // @ts-ignore
+  const imageArrayY = [defaultImageY, ...shuffleArray(Object.values(imagesY).map((module) => module.default))];
+  
+  // @ts-ignore
+  const imageArrayX = [defaultImageX, ...shuffleArray(Object.values(imagesX).map((module) => module.default))];
+
+  const [shuffledImagesY, setShuffledImagesY] = useState(imageArrayY);
+  const [shuffledImagesX, setShuffledImagesX] = useState(imageArrayX);
   const [imageIndexY, setImageIndexY] = useState(0);
   const [imageIndexX, setImageIndexX] = useState(0);
 
   useEffect(() => {
     if (imageIndexY >= shuffledImagesY.length) {
-      setShuffledImagesY(shuffleArray([...imageArrayY]));
+      setShuffledImagesY([defaultImageY, ...shuffleArray(Object.values(imagesY).map((module) => module.default))]);
       setImageIndexY(0);
     }
   }, [imageIndexY, shuffledImagesY]);
 
   useEffect(() => {
     if (imageIndexX >= shuffledImagesX.length) {
-      setShuffledImagesX(shuffleArray([...imageArrayX]));
+      setShuffledImagesX([defaultImageX, ...shuffleArray(Object.values(imagesX).map((module) => module.default))]);
       setImageIndexX(0);
     }
   }, [imageIndexX, shuffledImagesX]);
