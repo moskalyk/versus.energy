@@ -26,6 +26,7 @@ function App() {
 
   useEffect(() => {
     if (imageIndexY >= shuffledImagesY.length) {
+      // @ts-ignore
       setShuffledImagesY([defaultImageY, ...shuffleArray(Object.values(imagesY).map((module) => module.default))]);
       setImageIndexY(0);
     }
@@ -33,6 +34,7 @@ function App() {
 
   useEffect(() => {
     if (imageIndexX >= shuffledImagesX.length) {
+      // @ts-ignore
       setShuffledImagesX([defaultImageX, ...shuffleArray(Object.values(imagesX).map((module) => module.default))]);
       setImageIndexX(0);
     }
