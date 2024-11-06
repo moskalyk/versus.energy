@@ -9,7 +9,10 @@ import 'swiper/css';
 function App() {
   const imagesY = import.meta.glob('./assets/Y/*.png', { eager: true });
   const imagesX = import.meta.glob('./assets/X/*.png', { eager: true });
+  // @ts-ignore
   const imageArrayY = [defaultImageY, ...Object.values(imagesY).map((module) => module.default)];
+
+  // @ts-ignore
   const imageArrayX = [defaultImageX, ...Object.values(imagesX).map((module) => module.default)];
 
   const shuffleArray = (array: any) => array.sort(() => Math.random() - 0.5);
