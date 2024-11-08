@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './App.css';
 import defaultImageY from './assets/Y/default_y.png';
 import defaultImageX from './assets/X/default_x.png';
@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 // @ts-ignore
 import 'swiper/css';
 
-const muscleExercises = {
+const muscleExercises: any = {
   abs: [
     { title: "Crunches", description: "Lie on your back, knees bent, and crunch your torso up toward your knees." },
     { title: "Plank", description: "Hold a plank position on your forearms with your body in a straight line." },
@@ -126,10 +126,10 @@ const muscleExercises = {
 
 
 // CollapsibleCard component
-const CollapsibleCard = ({ title, children }) => {
+const CollapsibleCard = ({ title, children }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [height, setHeight] = useState(0);
-  const contentRef = useRef(null);
+  const contentRef: any = useRef(null);
 
   const toggleCollapse = () => {
     setIsOpen(!isOpen);
@@ -201,19 +201,22 @@ const styles = {
 function App() {
   const imagesY = import.meta.glob('./assets/Y/*.png', { eager: true });
   const imagesX = import.meta.glob('./assets/X/*.png', { eager: true });
-  const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
+  const shuffleArray = (array: any) => array.sort(() => Math.random() - 0.5);
 
+  // @ts-ignore
   const imageArrayY = [defaultImageY, ...shuffleArray(Object.values(imagesY).map((module) => module.default))];
+  
+  // @ts-ignore
   const imageArrayX = [defaultImageX, ...shuffleArray(Object.values(imagesX).map((module) => module.default))];
 
-  const [shuffledImagesY, setShuffledImagesY] = useState(imageArrayY);
-  const [shuffledImagesX, setShuffledImagesX] = useState(imageArrayX);
-  const [imageIndexY, setImageIndexY] = useState(0);
-  const [imageIndexX, setImageIndexX] = useState(0);
-  const [currentExercises, setCurrentExercises] = useState([]);
+  const [shuffledImagesY, _] = useState<any>(imageArrayY);
+  const [shuffledImagesX, __] = useState<any>(imageArrayX);
+  const [imageIndexY, setImageIndexY] = useState<any>(0);
+  const [imageIndexX, setImageIndexX] = useState<any>(0);
+  const [currentExercises, setCurrentExercises] = useState<any>([]);
 
-  const rotateImage = (index, setIndex) => {
-    setIndex((prevIndex) => (prevIndex + 1) % shuffledImagesY.length);
+  const rotateImage = (setIndex: any) => {
+    setIndex((prevIndex: any) => (prevIndex + 1) % shuffledImagesY.length);
   };
 
   // Effect to load exercises based on updated image indices
@@ -230,23 +233,31 @@ function App() {
   useEffect(() => {
     const currentImagePath = shuffledImagesX[imageIndexX];
     const imageName = currentImagePath.split('/').pop().split('?')[0].replace('.png', ''); // Remove query parameters and .png
-    // console.log(imageName)
     const exercises = muscleExercises[imageName] || [];
-    // console.log(exercises)
     setCurrentExercises(exercises);
   }, [imageIndexX, shuffledImagesX]);
+
+   const resetState = () => {
+    setCurrentExercises([]); // Clear the exercises list
+    setImageIndexY(0); // Reset Y image index
+    setImageIndexX(0); // Reset X image index
+  };
+
+  const handleSlideChange = () => {
+    resetState();
+  };
 
   return (
     <div>
       <p style={{ color: 'black' }}>Versus</p>
       <p style={{ color: 'black' }}>Train against AI</p>
-      <Swiper slidesPerView={1} spaceBetween={30} loop={true} className="mySwiper">
+      <Swiper onSlideChange={handleSlideChange} slidesPerView={1} spaceBetween={30} loop={true} className="mySwiper">
         <SwiperSlide>
           <img
             src={shuffledImagesY[imageIndexY]}
             className="logo"
             alt="Exercise"
-            onClick={() => rotateImage(imageIndexY, setImageIndexY)}
+            onClick={() => rotateImage(setImageIndexY)}
             style={{ ...styles.rotatingImage, width: '350px', height: '350px', cursor: 'pointer' }}
           />
         </SwiperSlide>
@@ -255,7 +266,7 @@ function App() {
             src={shuffledImagesX[imageIndexX]}
             className="logo"
             alt="Exercise"
-            onClick={() => rotateImage(imageIndexX, setImageIndexX)}
+            onClick={() => rotateImage(setImageIndexX)}
             style={{ ...styles.rotatingImage, width: '350px', height: '350px', cursor: 'pointer' }}
           />
         </SwiperSlide>
@@ -274,7 +285,7 @@ function App() {
       <br />
       
       {currentExercises.length > 0 ? (
-        currentExercises.map((exercise, index) => (
+        currentExercises.map((exercise: any, index: any) => (
           <CollapsibleCard title={exercise.title} key={index}>
             <p>{exercise.description}</p>
           </CollapsibleCard>
