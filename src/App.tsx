@@ -126,10 +126,10 @@ const muscleExercises: any = {
 
 
 // CollapsibleCard component
-const CollapsibleCard = ({ title, children, onRecord }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [height, setHeight] = useState(0);
-  const contentRef = useRef(null);
+const CollapsibleCard = ({ title, children, onRecord }: any) => {
+  const [isOpen, setIsOpen] = useState<any>(false);
+  const [height, setHeight] = useState<any>(0);
+  const contentRef = useRef<any>(null);
 
   const toggleCollapse = () => {
     setIsOpen(!isOpen);
@@ -150,8 +150,8 @@ const CollapsibleCard = ({ title, children, onRecord }) => {
     unit: 'lb',
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (evt: any) => {
+    const { name, value } = evt.target;
     setInputData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -216,7 +216,7 @@ const styles = {
   header: { display: 'flex', cursor: 'pointer', padding: '10px 15px', backgroundColor: '#f5f5f5' },
   title: { margin: 0, fontSize: '16px', fontWeight: '500' },
   content: { overflow: 'hidden', transition: 'height 0.3s ease' },
-  innerContent: { padding: '10px 15px', backgroundColor: '#fff' },
+  innerContent: { padding: '10px 15px', backgroundColor: '#fff', width: '300px' },
   inputGroup: { display: 'flex',
   justifyContent: 'center',
   alignItems: 'center' },
@@ -274,47 +274,53 @@ function App() {
     resetState();
   };
 
-    const [recordedData, setRecordedData] = useState([]);
+    const [recordedData, setRecordedData] = useState<any>([]);
 
 
-const handleRecord = (title, data) => {
-    setRecordedData((prev) => [...prev, { title, ...data }]);
+const handleRecord = (title: any, data: any) => {
+    setRecordedData((prev: any) => [...prev, { title, ...data }]);
   };
 
   const downloadSummary = () => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const cellWidth = 140;
-    const cellHeight = 30;
-    const tableWidth = cellWidth * 4;
-    const tableHeight = cellHeight * (recordedData.length + 1);
-    canvas.width = tableWidth;
-    canvas.height = tableHeight;
+  const canvas = document.createElement('canvas');
+  const ctx: any = canvas.getContext('2d');
+  const cellWidth = 220;
+  const cellHeight = 30;
+  const tableWidth = cellWidth * 4;
+  const tableHeight = cellHeight * (recordedData.length + 2); // Add extra height for the date at the top
+  canvas.width = tableWidth;
+  canvas.height = tableHeight;
 
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '16px Arial';
-    ctx.fillStyle = 'black';
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = '16px Arial';
+  ctx.fillStyle = 'black';
 
-    const headers = ['Exercise', 'Sets', 'Reps', 'Weight'];
-    headers.forEach((header, index) => {
-      ctx.fillText(header, index * cellWidth + 10, cellHeight - 10);
+  // Get the current date
+  const currentDate = new Date().toLocaleDateString();
+  ctx.fillText(`Summary Date: ${currentDate}`, 10, cellHeight - 10); // Position date at the top left
+
+  // Draw table headers, below the date
+  const headers = ['Exercise', 'Sets', 'Reps', 'Weight'];
+  headers.forEach((header: any, index: any) => {
+    ctx.fillText(header, index * cellWidth + 10, cellHeight * 2 - 10); // Shift headers down by one row height
+  });
+
+  // Draw table content
+  recordedData.forEach((record: any, rowIndex: any) => {
+    const row = [record.title, record.sets, record.reps, `${record.weight} ${record.unit}`];
+    row.forEach((cell: any, colIndex: any) => {
+      ctx.fillText(cell, colIndex * cellWidth + 10, (rowIndex + 3) * cellHeight - 10); // Adjust rowIndex to account for date and headers
+      ctx.strokeRect(colIndex * cellWidth, (rowIndex + 2) * cellHeight, cellWidth, cellHeight); // Adjust rowIndex to start below the headers
     });
+  });
 
-    recordedData.forEach((record, rowIndex) => {
-      const row = [record.title, record.sets, record.reps, `${record.weight} ${record.unit}`];
-      row.forEach((cell, colIndex) => {
-        ctx.fillText(cell, colIndex * cellWidth + 10, (rowIndex + 2) * cellHeight - 10);
-        ctx.strokeRect(colIndex * cellWidth, (rowIndex + 1) * cellHeight, cellWidth, cellHeight);
-      });
-    });
-
-    const dataURL = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'summary.png';
-    link.click();
-  };
+  const dataURL = canvas.toDataURL('image/png');
+  const link = document.createElement('a');
+  link.href = dataURL;
+  link.download = 'summary.png';
+  link.click();
+};
 
   return (
     <div>
@@ -327,7 +333,7 @@ const handleRecord = (title, data) => {
             className="logo"
             alt="Exercise"
             onClick={() => rotateImage(setImageIndexY)}
-            style={{ ...styles.rotatingImage, width: '350px', height: '350px', cursor: 'pointer' }}
+            style={{ width: '350px', height: '350px', cursor: 'pointer' }}
           />
         </SwiperSlide>
         <SwiperSlide>
@@ -336,7 +342,7 @@ const handleRecord = (title, data) => {
             className="logo"
             alt="Exercise"
             onClick={() => rotateImage(setImageIndexX)}
-            style={{ ...styles.rotatingImage, width: '350px', height: '350px', cursor: 'pointer' }}
+            style={{ width: '350px', height: '350px', cursor: 'pointer' }}
           />
         </SwiperSlide>
       </Swiper>
@@ -352,7 +358,7 @@ const handleRecord = (title, data) => {
       <br />
       <br />
       <br />
-        {currentExercises.map((exercise, index) => (
+        {currentExercises.map((exercise: any, index: any) => (
         <CollapsibleCard
           title={exercise.title}
           key={index}
