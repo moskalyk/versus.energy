@@ -126,10 +126,10 @@ const muscleExercises: any = {
 
 
 // CollapsibleCard component
-const CollapsibleCard = ({ title, children }: any) => {
+const CollapsibleCard = ({ title, children, onRecord }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [height, setHeight] = useState(0);
-  const contentRef: any = useRef(null);
+  const contentRef = useRef(null);
 
   const toggleCollapse = () => {
     setIsOpen(!isOpen);
@@ -143,6 +143,18 @@ const CollapsibleCard = ({ title, children }: any) => {
     }
   }, [isOpen]);
 
+  const [inputData, setInputData] = useState({
+    sets: '',
+    reps: '',
+    weight: '',
+    unit: 'lb',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputData((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.header} onClick={toggleCollapse}>
@@ -150,53 +162,68 @@ const CollapsibleCard = ({ title, children }: any) => {
       </div>
       <div
         ref={contentRef}
-        style={{
-          ...styles.content,
-          height: `${height}px`,
-          transition: 'height 0.3s ease',
-        }}
+        style={{ ...styles.content, height: `${height}px`, transition: 'height 0.3s ease' }}
       >
-        <div style={styles.innerContent}>{children}</div>
+        <div style={styles.innerContent}>
+          {children}
+          <div style={styles.inputGroup}>
+            <label>
+              Sets:
+              <input
+                type="number"
+                name="sets"
+                value={inputData.sets}
+                onChange={handleInputChange}
+                style={styles.input}
+              />
+            </label>
+            <label>
+              Reps:
+              <input
+                type="number"
+                name="reps"
+                value={inputData.reps}
+                onChange={handleInputChange}
+                style={styles.input}
+              />
+            </label>
+            <label>
+              Weight (lb):
+              <input
+                type="number"
+                name="weight"
+                value={inputData.weight}
+                onChange={handleInputChange}
+                style={styles.input}
+              />
+            </label>
+          </div>
+          <br/>
+          <button onClick={() => {setInputData({
+            sets: '',
+            reps: '',
+            weight: '',
+            unit: 'lb',
+          }); onRecord(title, inputData)}}>Record</button>
+        </div>
       </div>
     </div>
   );
 };
 
-// Basic styling
 const styles = {
-  container: {
-    border: '1px solid #ddd',
-    borderRadius: '5px',
-    margin: '10px 0',
-    overflow: 'hidden',
-  },
-  header: {
-    fontFamily: "Tiny5",
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    cursor: 'pointer',
-    padding: '10px 15px',
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    margin: 0,
-    fontSize: '16px',
-    fontWeight: '500',
-  },
-  content: {
-    overflow: 'hidden',
-    transition: 'height 0.3s ease',
-  },
-  innerContent: {
-    width: '300px',
-    padding: '10px 15px',
-    backgroundColor: '#fff',
-  },
-  rotatingImage: {
-    transition: 'transform 0.5s ease',
-  },
+  container: { border: '1px solid #ddd', borderRadius: '5px', margin: '10px 0', overflow: 'hidden' },
+  header: { display: 'flex', cursor: 'pointer', padding: '10px 15px', backgroundColor: '#f5f5f5' },
+  title: { margin: 0, fontSize: '16px', fontWeight: '500' },
+  content: { overflow: 'hidden', transition: 'height 0.3s ease' },
+  innerContent: { padding: '10px 15px', backgroundColor: '#fff' },
+  inputGroup: { display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center' },
+  input: { width: '60px' },
+  select: { marginLeft: '5px' },
 };
+
 
 function App() {
   const imagesY = import.meta.glob('./assets/Y/*.png', { eager: true });
@@ -247,6 +274,48 @@ function App() {
     resetState();
   };
 
+    const [recordedData, setRecordedData] = useState([]);
+
+
+const handleRecord = (title, data) => {
+    setRecordedData((prev) => [...prev, { title, ...data }]);
+  };
+
+  const downloadSummary = () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const cellWidth = 140;
+    const cellHeight = 30;
+    const tableWidth = cellWidth * 4;
+    const tableHeight = cellHeight * (recordedData.length + 1);
+    canvas.width = tableWidth;
+    canvas.height = tableHeight;
+
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '16px Arial';
+    ctx.fillStyle = 'black';
+
+    const headers = ['Exercise', 'Sets', 'Reps', 'Weight'];
+    headers.forEach((header, index) => {
+      ctx.fillText(header, index * cellWidth + 10, cellHeight - 10);
+    });
+
+    recordedData.forEach((record, rowIndex) => {
+      const row = [record.title, record.sets, record.reps, `${record.weight} ${record.unit}`];
+      row.forEach((cell, colIndex) => {
+        ctx.fillText(cell, colIndex * cellWidth + 10, (rowIndex + 2) * cellHeight - 10);
+        ctx.strokeRect(colIndex * cellWidth, (rowIndex + 1) * cellHeight, cellWidth, cellHeight);
+      });
+    });
+
+    const dataURL = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'summary.png';
+    link.click();
+  };
+
   return (
     <div>
       <p style={{ color: 'black' }}>Versus</p>
@@ -283,13 +352,26 @@ function App() {
       <br />
       <br />
       <br />
-        {currentExercises.map((exercise: any, index: any) => (
-          <CollapsibleCard title={exercise.title} key={index}>
-            <p>{exercise.description}</p>
-          </CollapsibleCard>
-        ))}
+        {currentExercises.map((exercise, index) => (
+        <CollapsibleCard
+          title={exercise.title}
+          key={index}
+          onRecord={handleRecord}
+        >
+          <p>{exercise.description}</p>
+        </CollapsibleCard>
+      ))}
+        {currentExercises.length > 0 && (
+        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+          <button onClick={downloadSummary}>download summary</button>
+        </div>
+      )}
+        <br/>
+        <br/>
     </div>
   );
 }
 
 export default App;
+
+
