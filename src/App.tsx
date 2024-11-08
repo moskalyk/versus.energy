@@ -189,7 +189,7 @@ const styles = {
     transition: 'height 0.3s ease',
   },
   innerContent: {
-    width: '400px',
+    width: '300px',
     padding: '10px 15px',
     backgroundColor: '#fff',
   },
@@ -283,14 +283,11 @@ function App() {
       <br />
       <br />
       <br />
-      
-      {currentExercises.length > 0 ? (
-        currentExercises.map((exercise: any, index: any) => (
+        {currentExercises.map((exercise: any, index: any) => (
           <CollapsibleCard title={exercise.title} key={index}>
             <p>{exercise.description}</p>
           </CollapsibleCard>
-        ))
-      ) : null}
+        ))}
     </div>
   );
 }
