@@ -309,18 +309,28 @@ const handleRecord = (title: any, data: any) => {
   // Draw table content
   recordedData.forEach((record: any, rowIndex: any) => {
     const row = [record.title, record.sets, record.reps, `${record.weight} ${record.unit}`];
-    row.forEach((cell: any, colIndex: any) => {
+    row.forEach((cell, colIndex) => {
       ctx.fillText(cell, colIndex * cellWidth + 10, (rowIndex + 3) * cellHeight - 10); // Adjust rowIndex to account for date and headers
       ctx.strokeRect(colIndex * cellWidth, (rowIndex + 2) * cellHeight, cellWidth, cellHeight); // Adjust rowIndex to start below the headers
     });
   });
 
-  const dataURL = canvas.toDataURL('image/png');
-  const link = document.createElement('a');
-  link.href = dataURL;
-  link.download = 'summary.png';
-  link.click();
+  // Convert canvas to Blob and create a downloadable link
+  canvas.toBlob((blob: any) => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'summary.png';
+
+    // For mobile devices, append to the DOM to ensure click works
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Release the object URL to free memory
+    URL.revokeObjectURL(link.href);
+  }, 'image/png');
 };
+
 
   return (
     <div>
